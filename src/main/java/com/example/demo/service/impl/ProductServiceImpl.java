@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.entities.Product;
 import com.example.demo.repositories.ProductRepository;
+import com.example.demo.services.CheckDiscountService;
 import com.example.demo.services.ProductService;
 
 @Service
@@ -16,25 +17,28 @@ public class ProductServiceImpl implements ProductService {
 
 	private ProductRepository productRepo;
 	
+	private CheckDiscountService check;
+	
 	@Autowired
-	public ProductServiceImpl( ProductRepository productRepo) {
+	public ProductServiceImpl( ProductRepository productRepo,CheckDiscountService check) {
 		this.productRepo = productRepo;
+		this.check = check;
 	}
 	
 	@Override
 	public Page<Product> sortingByNameAndUnitprice(int start, int end, String name, String unitPrice) {
 		Pageable pageable = PageRequest.of(start, end, Sort.by(name).and(Sort.by(unitPrice)));
-		return productRepo.findAll(pageable);
+		return check.checkForDiscount(productRepo.findAll(pageable));
 	}
 
 	@Override
 	public Iterable<Product> findAll() {
-		return productRepo.findAllMoreThan5();	
+		return check.checkForDiscount(productRepo.findAllMoreThan5());	
 		}
 
 	@Override
 	public Product findById(long id) {
-		return productRepo.findById(id).orElse(null);
+		return check.checkForDiscount(productRepo.findById(id).orElse(null));
 	}
 
 	@Override

@@ -44,5 +44,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 	public void delete(long id) {
 		productCategoryRepo.deleteById(id);
 	}
+	
+	
 
 }
